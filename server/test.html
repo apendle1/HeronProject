@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <button onclick="createRoom()">Create Room</button>
+  <br><br>
+  <input id="codeInput" placeholder="Enter room code" />
+  <button onclick="joinRoom()">Join Room</button>
+  <br><br>
+  <div id="log"></div>
+
+  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io('http://localhost:3000');
+    
+    function log(msg) {
+      document.getElementById('log').innerHTML += `<p>${msg}</p>`;
+    }
+
+    socket.on('connect', () => log('Connected: ' + socket.id));
+
+    socket.on('room_created', ({ code }) => {
+      log(`Room created! Code: ${code} — share this with your friend`);
+    });
+
+    socket.on('room_joined', ({ code }) => {
+      log(`Joined room: ${code}`);
+    });
+
+    socket.on('room_ready', ({ code }) => {
+      log(`Both players in room ${code} — ready to start!`);
+    });
+
+    socket.on('player_disconnected', () => {
+      log('Other player disconnected');
+    });
+
+    socket.on('error', ({ message }) => {
+      log('Error: ' + message);
+    });
+
+    function createRoom() {
+      socket.emit('create_room');
+    }
+
+    function joinRoom() {
+      const code = document.getElementById('codeInput').value.toUpperCase();
+      socket.emit('join_room', code);
+    }
+  </script>
+</body>
+</html>
