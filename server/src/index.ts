@@ -2,6 +2,21 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
+import { GameEngine } from './engine/GameEngine.ts';
+
+export interface defaultChoice {
+    id: string;
+    label: string;
+    subtext: string | null;
+}
+
+export interface defaultQuestion {
+    id: string;
+    type: string;
+    reveal: boolean;
+    answers: defaultChoice[];
+    style: string;
+}
 
 const app = express();
 const httpServer = createServer(app);
@@ -11,6 +26,7 @@ app.use(cors({origin: "*"}));
 interface Room{
     code: string,
     players: string[]; //socket ids
+    gameEngine: GameEngine | null;
 }
 
 const rooms = new Map<string, Room>();
@@ -48,7 +64,7 @@ io.on('connection', (socket) => {
     leaveCurrentRoom(socket);
 
     const code = generateRoomCode();
-    const room: Room = {code, players: [socket.id]};
+    const room: Room = {code, players: [socket.id], gameEngine: null};
     rooms.set(code, room);
     socket.join(code);
     playerRooms.set(socket.id, code);
@@ -79,6 +95,13 @@ io.on('connection', (socket) => {
     //notify players that the room is ready
     io.to(code).emit('room_ready', {code});
     console.log(`Room ${code} is ready`);
+
+    room.gameEngine = new GameEngine();
+
+    const dq = room.gameEngine.getOpeningFrame();
+    io.to(code).emit('frame', { dq });
+
+    const ge = new GameEngine;
   });
 
   socket.on('disconnect', ()=> {

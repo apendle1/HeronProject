@@ -1,0 +1,18 @@
+{
+    "id": "comp-Q1",
+    "type": "defaultChoice",
+    "reveal": true,
+    "style": "Scantron",
+    "answers": [
+        {
+            "id": "comp-Q1-true",
+            "label": "True",
+            "subtext": null
+        },
+        {
+            "id": "comp-Q1-false",
+            "label": "False",
+            "subtext": "Dont worry, these answers wont be shared with anybody."
+        }
+    ]
+}

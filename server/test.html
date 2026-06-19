@@ -30,6 +30,10 @@
       log(`Both players in room ${code} — ready to start!`);
     });
 
+    socket.on('frame', ({ dq }) => {
+      log(`frame received: ${dq.id}!`);
+    });
+
     socket.on('player_disconnected', () => {
       log('Other player disconnected');
     });
