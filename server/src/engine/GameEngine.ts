@@ -77,13 +77,20 @@ export interface defaultFrameSet{
 export class GameEngine {
     //private personalityQuestion: defaultQuestion;
     private frameset: defaultFrameSet;
+    private frameindex: number;
 
     constructor() {
         this.frameset = personalityData as defaultFrameSet;
+        this.frameindex = -1;
     }
 
     getOpeningFrame(): frame {
         return this.frameset.frames[0]!;
+    }
+
+    getFrame(): frame{
+        this.frameindex++;
+        return this.frameset.frames[this.frameindex]!;
     }
 
 }

@@ -11,6 +11,7 @@
   <script src="http://localhost:3000/socket.io/socket.io.js"></script>
   <script>
     const socket = io('http://localhost:3000');
+    let roomcode = null;
     
     function log(msg) {
       document.getElementById('log').innerHTML += `<p>${msg}</p>`;
@@ -20,21 +21,23 @@
 
     socket.on('room_created', ({ code }) => {
       log(`Room created! Code: ${code} — share this with your friend`);
+      roomcode = code;
     });
 
     socket.on('room_joined', ({ code }) => {
       log(`Joined room: ${code}`);
+      roomcode = code;
     });
 
     socket.on('room_ready', ({ code }) => {
       log(`Both players in room ${code} — ready to start!`);
     });
 
-    socket.on('frame', ({ dq }) => {
-      log(`frame received: ${dq.text}`);
-      if('answers' in dq){
-        for(const a of dq.answers){
-          log(`<button onclick="responseInput('${a.identity.id}')">a</button><b>a: ${a.label}</b> ${a.subtext != null ? `- ${a.subtext}` : ""}`);
+    socket.on('frame', ({ currFrame }) => {
+      log(`frame received: ${currFrame.text}`);
+      if('answers' in currFrame){
+        for(const a of currFrame.answers){
+          log(`<p onclick="responseInput('${a.identity.id}')"><b>a: ${a.label}</b> ${a.subtext != null ? `- ${a.subtext}` : ""}</p>`);
         }
       }
     });
@@ -57,7 +60,7 @@
     }
 
     function responseInput(response) {
-      socket.emit('response_input', response);
+      socket.emit('response_input', response, roomcode);
     }
   </script>
 </body>

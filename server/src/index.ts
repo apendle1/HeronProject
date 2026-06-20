@@ -34,6 +34,14 @@ function leaveCurrentRoom(socket: Socket) {
   }
 }
 
+function outputFrame(code: string, ge: GameEngine){
+  const currFrame = ge.getFrame();
+  io.to(code).emit('frame', { currFrame });
+  if(!('answers' in currFrame)){
+    outputFrame(code, ge);
+  }
+}
+
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
@@ -85,14 +93,17 @@ io.on('connection', (socket) => {
 
     room.gameEngine = new GameEngine();
 
-    const dq = room.gameEngine.getOpeningFrame();
-    io.to(code).emit('frame', { dq });
-
-    const ge = new GameEngine;
+    outputFrame(code, room.gameEngine);
   });
 
-  socket.on('response_input', (mess: string) =>{
+  socket.on('response_input', (mess: string, mcode: string) =>{
     console.log(`received input from ${socket.id}: ${mess}`);
+    
+    const room = rooms.get(mcode);
+    console.log(`attempting to send to ${mcode}`);
+    if(room?.gameEngine){
+      outputFrame(mcode, room.gameEngine);
+    }
   });
 
   socket.on('disconnect', ()=> {
