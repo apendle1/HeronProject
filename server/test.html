@@ -31,7 +31,12 @@
     });
 
     socket.on('frame', ({ dq }) => {
-      log(`frame received: ${dq.id}!`);
+      log(`frame received: ${dq.text}`);
+      if('answers' in dq){
+        for(const a of dq.answers){
+          log(`<button onclick="responseInput('${a.identity.id}')">a</button><b>a: ${a.label}</b> ${a.subtext != null ? `- ${a.subtext}` : ""}`);
+        }
+      }
     });
 
     socket.on('player_disconnected', () => {
@@ -49,6 +54,10 @@
     function joinRoom() {
       const code = document.getElementById('codeInput').value.toUpperCase();
       socket.emit('join_room', code);
+    }
+
+    function responseInput(response) {
+      socket.emit('response_input', response);
     }
   </script>
 </body>

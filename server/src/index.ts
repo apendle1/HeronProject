@@ -4,20 +4,6 @@ import { Server, Socket } from 'socket.io';
 import cors from 'cors';
 import { GameEngine } from './engine/GameEngine.ts';
 
-export interface defaultChoice {
-    id: string;
-    label: string;
-    subtext: string | null;
-}
-
-export interface defaultQuestion {
-    id: string;
-    type: string;
-    reveal: boolean;
-    answers: defaultChoice[];
-    style: string;
-}
-
 const app = express();
 const httpServer = createServer(app);
 
@@ -74,6 +60,7 @@ io.on('connection', (socket) => {
 
   //player 2 joins room
   socket.on('join_room', (code: string)=>{
+    leaveCurrentRoom(socket);
     const room = rooms.get(code);
 
     if(!room){
@@ -102,6 +89,10 @@ io.on('connection', (socket) => {
     io.to(code).emit('frame', { dq });
 
     const ge = new GameEngine;
+  });
+
+  socket.on('response_input', (mess: string) =>{
+    console.log(`received input from ${socket.id}: ${mess}`);
   });
 
   socket.on('disconnect', ()=> {

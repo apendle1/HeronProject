@@ -1,18 +1,31 @@
 {
-    "id": "comp-Q1",
-    "type": "defaultChoice",
-    "reveal": true,
-    "style": "Scantron",
-    "answers": [
+    "frames": [
         {
-            "id": "comp-Q1-true",
-            "label": "True",
-            "subtext": null
-        },
-        {
-            "id": "comp-Q1-false",
-            "label": "False",
-            "subtext": "Dont worry, these answers wont be shared with anybody."
+            "identity":{
+                "id": "comp-Q1",
+                "type": "defaultQuestion",
+                "style": "Scantron"
+            },
+            "text": "<h2>Question 1: Murder is always wrong.</h2>",
+            "reveal": true,
+            "answers": [
+                {
+                    "identity": {
+                        "id": "comp-Q2-true",
+                        "type": "scantron"
+                    },
+                    "label": "True",
+                    "subtext": null
+                },
+                {
+                    "identity": {
+                        "id": "comp-Q1-false",
+                        "type": "scantron"
+                    },
+                    "label": "False",
+                    "subtext": "Dont worry, these answers wont be shared with anybody."
+                }
+            ]
         }
     ]
 }

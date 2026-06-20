@@ -1,35 +1,89 @@
 import personalityData from '../story/scenes.json' with { type: "json"};
 
-//frame type
+//every frame has an id, type, and style. perhaps I make it its own thing. idtag?
 
-//export type = 
+export interface idtag {
+    id: string;
+    type: string;
+    style: string;
+}
+
+export interface choiceidtag{
+    id: string;
+    type: string;
+}
+
+//default question
+
+export interface defaultQuestion {
+    identity: idtag;
+    reveal: boolean;
+    answers: choice[];
+    text: string;
+}
+
+//TF Question
+
+export interface defaultTF {
+    identity: idtag;
+    reveal: boolean;
+}
+
+//textbox question
+
+export interface defaultTextbox {
+    identity: idtag;
+    reveal: boolean;
+    size: number;
+}
+
+//pure text
+
+export interface defaultText {
+    identity: idtag;
+    text: string;
+}
+
+//choice types
+
+//multi choice type
 
 export interface defaultChoice {
-    id: string;
+    identity: choiceidtag;
     label: string;
     subtext: string | null;
 }
 
-export interface defaultQuestion {
-    id: string;
-    type: string;
-    reveal: boolean;
-    answers: defaultChoice[];
-    style: string;
+//textbox choice
+
+export interface defaultTBChoice {
+    identity: choiceidtag;
+    label: string;
+    default: string | null;
 }
 
-export interface defaultSet{
-    questions: defaultQuestion[];
+//frame
+
+export type choice = defaultChoice | defaultTBChoice | null;
+export type frame = {identity: {id: string; type: 'defaultQuestion'; style: string}; reveal: boolean; answers: choice[]; text: string} //default choice
+    | {identity: {id: string; type: 'defaultText'; style: string}; text: string}; //default text
+
+//frame set
+
+export interface defaultFrameSet{
+    frames: frame[];
 }
 
 export class GameEngine {
-    private personalityQuestion: defaultQuestion;
+    //private personalityQuestion: defaultQuestion;
+    private frameset: defaultFrameSet;
 
     constructor() {
-        this.personalityQuestion = personalityData as defaultQuestion;
+        this.frameset = personalityData as defaultFrameSet;
     }
 
-    getOpeningFrame(): defaultQuestion {
-    return this.personalityQuestion;
+    getOpeningFrame(): frame {
+        return this.frameset.frames[0]!;
     }
+
 }
