@@ -16,7 +16,7 @@ interface Room{
 }
 
 const rooms = new Map<string, Room>();
-const playerRooms = new Map<string, string | null>(); //socket.id -> room code
+const playerRooms = new Map<string, string>(); //socket.id -> room code
 
 function generateRoomCode(): string {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -51,7 +51,7 @@ const io = new Server(httpServer, {
 
 io.on('connection', (socket) => {
   console.log('a user connected:', socket.id);
-  playerRooms.set(socket.id, null);
+  //playerRooms.set(socket.id, "");
   
   //player 1 creates room
   socket.on('create_room', ()=>{
@@ -91,17 +91,19 @@ io.on('connection', (socket) => {
     io.to(code).emit('room_ready', {code});
     console.log(`Room ${code} is ready`);
 
-    room.gameEngine = new GameEngine();
+    room.gameEngine = new GameEngine(room.players[0]!, room.players[1]!);
+    console.log(`room players: ${room.players[0]}, ${room.players[1]}`);
 
     outputFrame(code, room.gameEngine);
   });
 
-  socket.on('response_input', (mess: string, mcode: string) =>{
+  socket.on('response_input', (mess: string, qid: string, mcode: string) =>{
     console.log(`received input from ${socket.id}: ${mess}`);
-    
+
     const room = rooms.get(mcode);
     console.log(`attempting to send to ${mcode}`);
     if(room?.gameEngine){
+      if(room.gameEngine.recordResponse(socket.id, qid, mess))
       outputFrame(mcode, room.gameEngine);
     }
   });

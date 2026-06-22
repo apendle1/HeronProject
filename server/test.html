@@ -37,7 +37,7 @@
       log(`frame received: ${currFrame.text}`);
       if('answers' in currFrame){
         for(const a of currFrame.answers){
-          log(`<p onclick="responseInput('${a.identity.id}')"><b>a: ${a.label}</b> ${a.subtext != null ? `- ${a.subtext}` : ""}</p>`);
+          log(`<p onclick="responseInput('${a.identity.id}', '${currFrame.identity.id}')"><b>a: ${a.label}</b> ${a.subtext != null ? `- ${a.subtext}` : ""}</p>`);
         }
       }
     });
@@ -59,8 +59,8 @@
       socket.emit('join_room', code);
     }
 
-    function responseInput(response) {
-      socket.emit('response_input', response, roomcode);
+    function responseInput(response, qid) {
+      socket.emit('response_input', response, qid, roomcode);
     }
   </script>
 </body>
