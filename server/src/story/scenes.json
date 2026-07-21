@@ -6,7 +6,7 @@
                 "type": "defaultText",
                 "style": "Scantron"
             },
-            "text": "<h1>TESTIMONIAL COMPETENCY EVALUATION TEST</h1><p>A key step in the process of getting testimonials from witnesses is to check for signs of Psychopathy, Sociopathy, Anger, Resilience, Guilt, Dismissal, Grief, Ineptitude of our witnesses, etc, etc. As such, you must answer the following questions to prove your competency or lack thereof.</p><p>AMENDATION: I’ve been informed that ‘Competency’ and ‘Ineptitude’ are improper terms to use in official documents. I’ll work on finding a softer language to describe idiocy. Until then, just know there’s nothing wrong with idiots, they just become a legal hassle and I hate working with idiots. So please, prove to me you aren't an idiot.</p>"
+            "text": "<h1>TESTIMONIAL COMPETENCY EVALUATION TEST</h1><p>A key step in the process of getting testimonials from witnesses is to check for signs of Psychopathy, Sociopathy, Anger, Resilience, Guilt, Dismissal, Grief, Ineptitude of our witnesses, etc, etc. As such, you must answer the following questions to prove your competency or lack thereof.</p>"
         },
         {
             "identity":{
@@ -14,7 +14,7 @@
                 "type": "defaultQuestion",
                 "style": "Scantron"
             },
-            "text": "<h2>Question 1: Murder is always wrong.</h2>",
+            "text": "<h2>Question 1: I always tell the truth.</h2>",
             "reveal": true,
             "answers": [
                 {
