@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>The Intercept</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <button onclick="createRoom()">Create Room</button>
+    <br><br>
+    <input id="codeInput" placeholder="Enter room code" />
+    <button onclick="joinRoom()">Join Room</button>
+    <br><br>
+    <div id="log"></div>
+
+    <div id="story" class="container">
+        <h1>The Intercept</h1>
+    </div>
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script src="ink.js"></script>
+    <script src="story.js"></script>
+    <script src="main.js"></script>
+    <script src="room.js"></script>
+</body>
+</html>

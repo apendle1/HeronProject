@@ -15,3 +15,5 @@ How it works:
 The project makes use of TypeScript, Node.js, and WebSockets to handle communication.
 
 Note: As of right now, the while the project is being built, a test.html file and a scenes.json file exist for prototyping, these contain basic story content that works as an example of what the engine is capable of.
+
+UPCOMING WORK (TODO): Refactor for Ink integration! Client html has been added that runs the default ink.js serverless template. I've stripped parts from server that originally would have sent my own json 'frame' content, but refactoring to use ink just makes more sense. room creation logic has been kept, variables need to now be repeated as they are set by a user. Client needs to send and Server needs to accept variable definition messages.

@@ -34,13 +34,6 @@ function leaveCurrentRoom(socket: Socket) {
   }
 }
 
-function outputFrame(code: string, ge: GameEngine){
-  const currFrame = ge.getFrame();
-  io.to(code).emit('frame', { currFrame });
-  if(!('answers' in currFrame)){
-    outputFrame(code, ge);
-  }
-}
 
 const io = new Server(httpServer, {
   cors: {
@@ -91,10 +84,14 @@ io.on('connection', (socket) => {
     io.to(code).emit('room_ready', {code});
     console.log(`Room ${code} is ready`);
 
+    /*
+
+    //This logic is for a previous version of server. Game States are now held locally.
     room.gameEngine = new GameEngine(room.players[0]!, room.players[1]!);
     console.log(`room players: ${room.players[0]}, ${room.players[1]}`);
 
     outputFrame(code, room.gameEngine);
+    */
   });
 
   socket.on('response_input', (mess: string, qid: string, mcode: string) =>{
@@ -102,10 +99,6 @@ io.on('connection', (socket) => {
 
     const room = rooms.get(mcode);
     console.log(`attempting to send to ${mcode}`);
-    if(room?.gameEngine){
-      if(room.gameEngine.recordResponse(socket.id, qid, mess))
-      outputFrame(mcode, room.gameEngine);
-    }
   });
 
   socket.on('disconnect', ()=> {
