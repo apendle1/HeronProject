@@ -94,18 +94,16 @@ io.on('connection', (socket) => {
     */
   });
 
-  socket.on('response_input', (mess: string, qid: string, mcode: string) =>{
-    console.log(`received input from ${socket.id}: ${mess}`);
-
-    const room = rooms.get(mcode);
-    console.log(`attempting to send to ${mcode}`);
-  });
-
   socket.on('disconnect', ()=> {
     //clean up
     leaveCurrentRoom(socket);
     playerRooms.delete(socket.id);
     console.log(`Disconnected ${socket.id}`);
+  });
+
+  socket.on('receive_var', (varname: string, value: string)=>{
+    //TODO go to room in game engine, get other players to send out var to.
+    console.log(`Received Var ${varname}: ${value} from ${socket.id}`);
   });
 });
 

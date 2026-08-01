@@ -1,3 +1,5 @@
+
+
 const socket = io('http://localhost:3000');
 let roomcode = null;
 
@@ -15,6 +17,7 @@ socket.on('room_joined', ({ code }) => {
 
 socket.on('room_ready', ({ code }) => {
     console.log(`Both players in room ${code} — ready to start!`);
+    processStory(storyContent);
 });
 
 socket.on('player_disconnected', () => {

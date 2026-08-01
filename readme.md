@@ -8,9 +8,7 @@ How it works:
 
 - Players are connected to a shared "room"
 
-- A 'GameEngine' Object is created to handle how the story plays out, and drives which 'frames' are sent to each player. Frames hold text, questions, choices that are sent to each player.
-
-- When both players answer a question or satisfy the requirements of the frame the story moves on.
+- A 'GameEngine' Object is created to handle how the story plays out, and keeps Players updated on variable changes.
 
 The project makes use of TypeScript, Node.js, and WebSockets to handle communication.
 

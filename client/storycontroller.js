@@ -1,4 +1,4 @@
-(function(storyContent) {
+function processStory(storyContent) {
 
     var story = new inkjs.Story(storyContent);
 
@@ -97,4 +97,6 @@
 
     continueStory();
 
-})(storyContent);
+}
+
+module.exports = processStory;
