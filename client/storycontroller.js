@@ -2,6 +2,28 @@ function processStory(storyContent) {
 
     var story = new inkjs.Story(storyContent);
 
+    //listen for all variable changes and submit them to server as they happen for both behavior and saving practices.
+
+    const varRegistry = {};
+
+    const varnames = Array.from(story.variablesState._globalVariables.keys());
+
+    function cvariablechange(varname, value){
+        console.log(`variable changed: ${varname} -> ${value}`);
+
+        sendVar(varname, value);
+    }
+
+    for (let varname of varnames){
+        varRegistry[varname] = story.variablesState[varname];
+
+        story.ObserveVariable(varname, (name, newValue) => {
+            cvariablechange(varname, newValue);
+            varRegistry[varname] = newValue;
+        });
+    }
+
+
     var storyContainer = document.querySelectorAll('#story')[0];
 
     function isAnimationEnabled() {
@@ -72,9 +94,6 @@ function processStory(storyContent) {
             var choiceAnchorEl = choiceParagraphElement.querySelectorAll("a")[0];
             choiceAnchorEl.addEventListener("click", function(event) {
 
-                //TODO: ADD SERVER BEHAVIOR HERE. Copy Variable changes and send.
-                sendVar('health', 100);
-
                 // Don't follow <a> link
                 event.preventDefault();
 
@@ -87,6 +106,9 @@ function processStory(storyContent) {
 
                 // Tell the story where to go next
                 story.ChooseChoiceIndex(choice.index);
+
+                //TODO: ADD SERVER BEHAVIOR HERE. Copy Variable changes and send.
+                //sendVar('health', 100);
 
                 // Aaand loop
                 continueStory();

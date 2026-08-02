@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+server/.DS_Store
+
+# Node
+server/node_modules/
+server/npm-debug.log
+
+# Environment variables
+server/.env
+
+# Build output
+server/dist/
+server/build/
+
+# Editor
+server/.vscode/
+server/.idea/
+
+# else
+Heron/
