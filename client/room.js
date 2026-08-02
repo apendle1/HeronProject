@@ -37,4 +37,8 @@ function joinRoom() {
     socket.emit('join_room', code);
 }
 
+function sendVar(varname, value) {
+    socket.emit('cupdate_var', varname, value);
+}
+
 //socket emit will happen when variables update.

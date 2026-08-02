@@ -2,7 +2,7 @@ export class GameEngine {
     private pOne: string;
     private pTwo: string;
 
-    constructor(player1: string, player2: string) {
+    constructor(player1: string, player2: string) { //TODO update to handle games with more than two.
         this.pOne = player1;
         this.pTwo = player2;
     }

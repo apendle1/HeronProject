@@ -73,6 +73,7 @@ function processStory(storyContent) {
             choiceAnchorEl.addEventListener("click", function(event) {
 
                 //TODO: ADD SERVER BEHAVIOR HERE. Copy Variable changes and send.
+                sendVar('health', 100);
 
                 // Don't follow <a> link
                 event.preventDefault();

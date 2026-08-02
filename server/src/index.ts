@@ -101,7 +101,7 @@ io.on('connection', (socket) => {
     console.log(`Disconnected ${socket.id}`);
   });
 
-  socket.on('receive_var', (varname: string, value: string)=>{
+  socket.on('cupdate_var', (varname: string, value: string)=>{
     //TODO go to room in game engine, get other players to send out var to.
     console.log(`Received Var ${varname}: ${value} from ${socket.id}`);
   });
