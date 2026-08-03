@@ -2,6 +2,7 @@
 
 const socket = io('http://localhost:3000');
 let roomcode = null;
+let s = null;
 
 socket.on('connect', () => console.log('Connected: ' + socket.id));
 
@@ -17,11 +18,17 @@ socket.on('room_joined', ({ code }) => {
 
 socket.on('room_ready', ({ code }) => {
     console.log(`Both players in room ${code} — ready to start!`);
-    processStory(storyContent);
+    s = new StoryController(storyContent);
+    s.processStory();
 });
 
 socket.on('assign_role', (idnum) => {
     console.log(`accept role: ${idnum}`);
+    s.localvariablechange("role", (idnum ? "p2" : "p1"));
+});
+
+socket.on('supdate_var', (varname, value) => {
+    s.localvariablechange(varname, value);
 });
 
 socket.on('player_disconnected', () => {

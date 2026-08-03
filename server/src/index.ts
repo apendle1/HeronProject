@@ -114,6 +114,9 @@ io.on('connection', (socket) => {
   socket.on('cupdate_var', (varname: string, value: string)=>{
     //TODO go to room in game engine, get other players to send out var to.
     console.log(`Received Var ${varname}: ${value} from ${socket.id}`);
+    //repeat var
+    const currentCode = playerRooms.get(socket.id);
+    if(currentCode)io.to(currentCode).emit('supdate_var', varname, value);
   });
 });
 

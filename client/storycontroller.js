@@ -1,124 +1,137 @@
-function processStory(storyContent) {
-
-    var story = new inkjs.Story(storyContent);
-
-    //listen for all variable changes and submit them to server as they happen for both behavior and saving practices.
-
-    const varRegistry = {};
-
-    const varnames = Array.from(story.variablesState._globalVariables.keys());
-
-    function cvariablechange(varname, value){
-        console.log(`variable changed: ${varname} -> ${value}`);
-
-        sendVar(varname, value);
+class StoryController {
+    constructor(storyContent){
+        this.story = new inkjs.Story(storyContent);
     }
 
-    for (let varname of varnames){
-        varRegistry[varname] = story.variablesState[varname];
+    processStory(){
+        //var story = new inkjs.Story(storyContent);
 
-        story.ObserveVariable(varname, (name, newValue) => {
-            cvariablechange(varname, newValue);
-            varRegistry[varname] = newValue;
-        });
-    }
+        //listen for all variable changes and submit them to server as they happen for both behavior and saving practices.
 
+        const varRegistry = {};
 
-    var storyContainer = document.querySelectorAll('#story')[0];
+        const varnames = Array.from(this.story.variablesState._globalVariables.keys());
 
-    function isAnimationEnabled() {
-        return window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
-    }
+        function cvariablechange(varname, value){
+            console.log(`variable changed: ${varname} -> ${value}`);
 
-    function showAfter(delay, el) {
-        setTimeout(function() { el.classList.add("show") }, isAnimationEnabled() ? delay : 0);
-    }
-
-    function scrollToBottom() {
-        // If the user doesn't want animations, let them scroll manually
-        if (!isAnimationEnabled()) {
-            return;
-        }
-        var start = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-        var dist = document.body.scrollHeight - window.innerHeight - start;
-        if( dist < 0 ) return;
-
-        var duration = 300 + 300*dist/100;
-        var startTime = null;
-        function step(time) {
-            if( startTime == null ) startTime = time;
-            var t = (time-startTime) / duration;
-            var lerp = 3*t*t - 2*t*t*t;
-            window.scrollTo(0, start + lerp*dist);
-            if( t < 1 ) requestAnimationFrame(step);
-        }
-        requestAnimationFrame(step);
-    }
-
-    function continueStory() {
-
-        var paragraphIndex = 0;
-        var delay = 0.0;
-
-        // Generate story text - loop through available content
-        while(story.canContinue) {
-
-            // Get ink to generate the next paragraph
-            var paragraphText = story.Continue();
-
-            // Create paragraph element
-            var paragraphElement = document.createElement('p');
-            paragraphElement.innerHTML = paragraphText;
-            storyContainer.appendChild(paragraphElement);
-
-            // Fade in paragraph after a short delay
-            showAfter(delay, paragraphElement);
-
-            delay += 200.0;
+            sendVar(varname, value);
         }
 
-        // Create HTML choices from ink choices
-        story.currentChoices.forEach(function(choice) {
+        for (let varname of varnames){
+            if(varname !== "role"){
+                varRegistry[varname] = this.story.variablesState[varname];
 
-            // Create paragraph with anchor element
-            var choiceParagraphElement = document.createElement('p');
-            choiceParagraphElement.classList.add("choice");
-            choiceParagraphElement.innerHTML = `<a href='#'>${choice.text}</a>`
-            storyContainer.appendChild(choiceParagraphElement);
+                this.story.ObserveVariable(varname, (name, newValue) => {
+                    cvariablechange(varname, newValue);
+                    varRegistry[varname] = newValue;
+                });
+            }
+        }
 
-            // Fade choice in after a short delay
-            showAfter(delay, choiceParagraphElement);
-            delay += 200.0;
 
-            // Click on choice
-            var choiceAnchorEl = choiceParagraphElement.querySelectorAll("a")[0];
-            choiceAnchorEl.addEventListener("click", function(event) {
+        var storyContainer = document.querySelectorAll('#story')[0];
 
-                // Don't follow <a> link
-                event.preventDefault();
+        function isAnimationEnabled() {
+            return window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+        }
 
-                // Remove all existing choices
-                var existingChoices = storyContainer.querySelectorAll('p.choice');
-                for(var i=0; i<existingChoices.length; i++) {
-                    var c = existingChoices[i];
-                    c.parentNode.removeChild(c);
-                }
+        function showAfter(delay, el) {
+            setTimeout(function() { el.classList.add("show") }, isAnimationEnabled() ? delay : 0);
+        }
 
-                // Tell the story where to go next
-                story.ChooseChoiceIndex(choice.index);
+        function scrollToBottom() {
+            // If the user doesn't want animations, let them scroll manually
+            if (!isAnimationEnabled()) {
+                return;
+            }
+            var start = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            var dist = document.body.scrollHeight - window.innerHeight - start;
+            if( dist < 0 ) return;
 
-                //TODO: ADD SERVER BEHAVIOR HERE. Copy Variable changes and send.
-                //sendVar('health', 100);
+            var duration = 300 + 300*dist/100;
+            var startTime = null;
+            function step(time) {
+                if( startTime == null ) startTime = time;
+                var t = (time-startTime) / duration;
+                var lerp = 3*t*t - 2*t*t*t;
+                window.scrollTo(0, start + lerp*dist);
+                if( t < 1 ) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
 
-                // Aaand loop
-                continueStory();
+        const continueStory = () => {
+
+            var paragraphIndex = 0;
+            var delay = 0.0;
+
+            // Generate story text - loop through available content
+            while(this.story.canContinue) {
+
+                // Get ink to generate the next paragraph
+                var paragraphText = this.story.Continue();
+
+                // Create paragraph element
+                var paragraphElement = document.createElement('p');
+                paragraphElement.innerHTML = paragraphText;
+                storyContainer.appendChild(paragraphElement);
+
+                // Fade in paragraph after a short delay
+                showAfter(delay, paragraphElement);
+
+                delay += 200.0;
+            }
+
+            // Create HTML choices from ink choices
+            this.story.currentChoices.forEach((choice) => {
+
+                // Create paragraph with anchor element
+                var choiceParagraphElement = document.createElement('p');
+                choiceParagraphElement.classList.add("choice");
+                choiceParagraphElement.innerHTML = `<a href='#'>${choice.text}</a>`
+                storyContainer.appendChild(choiceParagraphElement);
+
+                // Fade choice in after a short delay
+                showAfter(delay, choiceParagraphElement);
+                delay += 200.0;
+
+                // Click on choice
+                var choiceAnchorEl = choiceParagraphElement.querySelectorAll("a")[0];
+                choiceAnchorEl.addEventListener("click", (event) => {
+
+                    // Don't follow <a> link
+                    event.preventDefault();
+
+                    // Remove all existing choices
+                    var existingChoices = storyContainer.querySelectorAll('p.choice');
+                    for(var i=0; i<existingChoices.length; i++) {
+                        var c = existingChoices[i];
+                        c.parentNode.removeChild(c);
+                    }
+
+                    // Tell the story where to go next
+                    this.story.ChooseChoiceIndex(choice.index);
+
+                    //TODO: ADD SERVER BEHAVIOR HERE. Copy Variable changes and send.
+                    //sendVar('health', 100);
+
+                    // Aaand loop
+                    continueStory();
+                });
             });
-        });
 
-        scrollToBottom();
+            scrollToBottom();
+        }
+
+        continueStory();
+
     }
 
-    continueStory();
-
+    localvariablechange(varname, value){
+        if(this.story.variablesState[varname] !== value){
+            console.log(`variable changed: ${varname} -> ${value}`);
+            this.story.variablesState[varname] = value;
+        }
+    }
 }
-
