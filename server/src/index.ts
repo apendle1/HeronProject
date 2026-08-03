@@ -12,7 +12,7 @@ app.use(cors({origin: "*"}));
 interface Room{
     code: string,
     players: string[]; //socket ids
-    gameEngine: GameEngine | null;
+    gameEngine: GameEngine;
 }
 
 const rooms = new Map<string, Room>();
@@ -51,12 +51,13 @@ io.on('connection', (socket) => {
     leaveCurrentRoom(socket);
 
     const code = generateRoomCode();
-    const room: Room = {code, players: [socket.id], gameEngine: null};
+    const room: Room = {code, players: [socket.id], gameEngine: new GameEngine};
     rooms.set(code, room);
     socket.join(code);
     playerRooms.set(socket.id, code);
     socket.emit('room_created', { code });
     console.log(`Room ${code} created by ${socket.id}`);
+    room.gameEngine.setPlayer(0, socket.id)
   });
 
   //player 2 joins room
@@ -75,6 +76,7 @@ io.on('connection', (socket) => {
     }
 
     room.players.push(socket.id);
+    room.gameEngine.setPlayer(1, socket.id);
     console.log(`Player count: ${room.players.length}`)
     socket.join(code);
     playerRooms.set(socket.id, code);
@@ -83,6 +85,14 @@ io.on('connection', (socket) => {
     //notify players that the room is ready
     io.to(code).emit('room_ready', {code});
     console.log(`Room ${code} is ready`);
+
+    //TODO assign roles
+    for(let i = 0; i < room.players.length; i++){
+      const target = room.players[i];
+      if(!target)continue;
+      io.to(target).emit('assign_role', i);
+      console.log(`role assigned to ${target}: ${i}`);
+    }
 
     /*
 

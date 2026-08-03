@@ -20,6 +20,10 @@ socket.on('room_ready', ({ code }) => {
     processStory(storyContent);
 });
 
+socket.on('assign_role', (idnum) => {
+    console.log(`accept role: ${idnum}`);
+});
+
 socket.on('player_disconnected', () => {
     console.log('Other player disconnected');
 });
@@ -27,6 +31,7 @@ socket.on('player_disconnected', () => {
 socket.on('error', ({ message }) => {
     console.log('Error: ' + message);
 });
+
 
 function createRoom() {
     socket.emit('create_room');

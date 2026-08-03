@@ -122,4 +122,3 @@ function processStory(storyContent) {
 
 }
 
-module.exports = processStory;
