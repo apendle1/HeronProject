@@ -13,6 +13,7 @@ class StoryController {
         const varnames = Array.from(this.story.variablesState._globalVariables.keys());
 
         function cvariablechange(varname, value){
+            //TODO send json stringify for a list change.
             console.log(`variable changed: ${varname} -> ${value}`);
 
             sendVar(varname, value);
@@ -112,9 +113,6 @@ class StoryController {
 
                     // Tell the story where to go next
                     this.story.ChooseChoiceIndex(choice.index);
-
-                    //TODO: ADD SERVER BEHAVIOR HERE. Copy Variable changes and send.
-                    //sendVar('health', 100);
 
                     // Aaand loop
                     continueStory();
