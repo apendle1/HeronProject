@@ -1,0 +1,93 @@
+@import url('https://googleapis.com');
+
+:root{
+    --paper: #EDEAE0;
+    --paper-2: #E4E0D2;
+    --ink: #1C1B19;
+    --softink: #4A473F;
+    --redline: #9B2226;
+}
+
+#landingcontainer{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: stretch;
+}
+
+html, body, #root{
+    padding: 0;
+    margin: 0;
+    min-height: 100dvh;
+}
+
+#root{
+    display: flex;
+    flex-direction: column;
+}
+
+#header{
+    max-height: 50px;
+    padding: 8px;
+    background-color: var(--paper-2)
+}
+
+#content{
+    flex: 1;
+    background-color: var(--paper);
+    padding: 8px;
+}
+
+#rooms{
+    min-width: 30%;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    gap: 10px;
+
+}
+
+#about{
+    padding: 30px;
+    border-right: 2px solid var(--softink);
+    max-width: 50dvw;
+}
+
+p{
+    color:var(--softink);
+}
+
+h1 {
+    color:var(--ink);
+}
+
+.roomButton{
+    background-color:var(--softink);
+    color: var(--paper);
+    padding: 10px;
+    width: 150px;
+}
+
+#mainlogo{
+    max-width: 50dvw;
+}
+
+#minilogo{
+    max-height: 2dvh;
+    filter: invert(26%) sepia(20%) saturate(257%) hue-rotate(6deg) brightness(94%) contrast(89%);
+}
+
+.rltext{
+    color:var(--redline);
+}
+
+.softtext{
+    color:var(--softink);
+    font-family: 'Courier Prime', monospace;
+    font-size: 20px;
+}
+
+body{
+    font-family: 'Spectral', serif;
+    font-size: 30px;
+}
