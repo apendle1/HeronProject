@@ -58,7 +58,7 @@ function LandingPage({roomcode, roomCapacity, createRoom, joinRoom}){
             <div id="landingcontainer">
                 <div id="about">
                     <img src={logoimg} id="mainlogo" alt="Heron Game Logo"/>
-                    <p class="softtext">An interactive fiction by Austin Pendley.</p>
+                    <p className="softtext">An interactive fiction by Austin Pendley.</p>
                     <p>Grab a friend and try out a multiplayer text adventure. You'll play as two seperate points of view following the same story. Both you and your friend will make choices that will determine the path the story travels. The project is powered by ink and webhooks, feel free to check out the github page below if you're interested!</p>
                 </div>
                 <div id="rooms">

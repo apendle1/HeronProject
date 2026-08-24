@@ -57,19 +57,22 @@ function sendVar(varname, value) {
 
 */
 
-import { useEffect, useRef, useState, useCallback} from 'react';
+import {useEffect, useRef, useState, useCallback} from 'react';
 import {io} from 'socket.io-client';
 
 //import storycontroller and ink stuff
 
-export function useGameSocket(serverURL = 'http://localhost:3000'){
+export function useGameSocket({setCurrentPage}, serverURL = 'http://localhost:3000'){
     const [roomcode, setRoomcode] = useState(null);
     const [connected, setConnected] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
     const [roomCapacity, setRoomCapacity] = useState(null);
 
     const socketRef = useRef(null);
-    const storyRef = useRef(null); //this was s
+    const storyRef = useRef(); //this was s
+    const varListenerRef = useRef(new Set());
+
+
 
     useEffect(() => {
         const socket = io(serverURL);
@@ -98,15 +101,22 @@ export function useGameSocket(serverURL = 'http://localhost:3000'){
             //wait a moment then trigger a switch to the new content side.
             //s = new StoryController(storyContent);
             //s.processStory();
+            /*
+            */
         });
 
         socket.on('assign_role', (idnum) => {
             console.log(`accept role: ${idnum}`);
+            setCurrentPage("story");
             //s.localvariablechange("role", (idnum ? "p2" : "p1"));
+            setTimeout(() => {
+                varListenerRef.current.forEach(cb => cb("role", (idnum ? "p2" : "p1")));
+            }, 5000);
         });
 
         socket.on('supdate_var', (varname, value) => {
             //s.localvariablechange(varname, value);
+            varListenerRef.current.forEach(cb => cb(varname, value));
         });
 
         socket.on('player_disconnected', () => {
@@ -119,24 +129,9 @@ export function useGameSocket(serverURL = 'http://localhost:3000'){
         });
 
         return () => {
-        socket.disconnect();
-    };
+            socket.disconnect();
+        };
     }, [serverURL]);
-
-    //cleanup on unmount
-
-    /* function createRoom() {
-        socket.emit('create_room');
-    }
-    
-    function joinRoom() {
-        const code = document.getElementById('codeInput').value.toUpperCase();
-        socket.emit('join_room', code);
-    }
-
-    function sendVar(varname, value) {
-        socket.emit('cupdate_var', varname, value); 
-    } */
 
     const createRoom = useCallback(() => {
         socketRef.current?.emit('create_room');
@@ -150,6 +145,11 @@ export function useGameSocket(serverURL = 'http://localhost:3000'){
         socketRef.current?.emit('cupdate_var', varname, value);
     }, []);
 
+    const onIncomingVar = useCallback((callback) => {
+        varListenerRef.current.add(callback);
+        return () => varListenerRef.current.delete(callback);
+    });
+
     return {
         roomcode,
         roomCapacity,
@@ -158,6 +158,7 @@ export function useGameSocket(serverURL = 'http://localhost:3000'){
         story: storyRef.current,
         createRoom,
         joinRoom,
-        sendVar
+        sendVar,
+        onIncomingVar
     };
 }

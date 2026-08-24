@@ -55,6 +55,7 @@ html, body, #root{
 
 p{
     color:var(--softink);
+    
 }
 
 h1 {
@@ -90,4 +91,9 @@ h1 {
 body{
     font-family: 'Spectral', serif;
     font-size: 30px;
+}
+
+#storyContainer{
+    padding-left: 50px;
+    padding-right: 50px;
 }
