@@ -1,17 +1,23 @@
-import { useEffect } from 'react';
+import {useEffect, useRef, useState, useCallback} from 'react';
+import {io} from 'socket.io-client';
 import { Story } from 'inkjs';
 
 //import 'ink'
 
-class InkController{
-    constructor(storyJson, sendVar, {onParagraph, onAnswer, onEnd} = {}){
+class GameController{
+    constructor(storyJson, {onParagraph, onAnswer, onEnd} = {}){
         this.story = new Story(storyJson);
         console.log("constructed okay");
         this.onParagraph = onParagraph || (() => {});
         this.onAnswer = onAnswer || (() => {});
         this.onEnd = onEnd || (() => {});
-        this.sendVar = sendVar;
         this.varRegistry = {};
+
+        this.socketRef = null;
+    }
+
+    setSocket(socket){
+        this.socket = socket;
     }
 
     tracking(){
@@ -23,7 +29,7 @@ class InkController{
             //TODO send json stringify for a list change.
             console.log(`variable changed: ${varname} -> ${value}`);
 
-            this.sendVar(varname, value);
+            this.socket?.emit('cupdate_var', varname, value);
         }
 
         for (let varname of varnames){
@@ -62,4 +68,4 @@ class InkController{
     }
 }
 
-export default InkController;
+export default GameController;

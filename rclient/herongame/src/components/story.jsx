@@ -1,37 +1,6 @@
-import {useState, useRef, useEffect} from 'react';
 
-import InkController from './storycontroller'
-import storycontent from '../assets/sorttest'
-console.log(storycontent);
 
-function StoryPage({ sendVar, onIncomingVar}){
-    const controllerRef = useRef(null);
-    const [paragraphs, setParagraphs] = useState([]);
-    const [answers, setAnswers] = useState([]);
-
-    useEffect(() => {
-        try{
-
-            controllerRef.current = new InkController(storycontent, sendVar,
-            {onParagraph: (text) => setParagraphs(prev => [...prev, text]),
-            onAnswer: (c) => setAnswers(c),
-            });
-
-            controllerRef.current.tracking();
-
-            controllerRef.current.advance();
-
-        }catch (err){
-            console.error('real error: ', err);
-        }
-    }, []);
-    useEffect(() => {
-        const repeat = onIncomingVar((varname, value) =>{
-            controllerRef.current?.localvariablechange(varname, value);
-        });
-        return repeat;
-    }, [onIncomingVar]);
-    
+function StoryPage({controllerRef, paragraphs, answers}){
     
     return(<>
             <div id="storyContainer">
