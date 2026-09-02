@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
-import GameController from './gamecontroller';
+import GameController from './gamecontrollerc';
 
 export function useGameController(storycontent, { setCurrentPage }, serverURL = 'http://localhost:3000'){
     const controllerRef = useRef(null);
@@ -22,9 +22,6 @@ export function useGameController(storycontent, { setCurrentPage }, serverURL = 
     useEffect(() => {
         if (initRef.current) return;
         initRef.current = true;
-
-        controllerRef.current.tracking();
-        controllerRef.current.advance();
     }, []);
 
     // socket lifecycle
@@ -48,8 +45,9 @@ export function useGameController(storycontent, { setCurrentPage }, serverURL = 
         socket.on('room_ready', () => setRoomCapacity(2));
 
         socket.on('assign_role', (idnum) => {
+        controllerRef.current.advance();
         setCurrentPage("story");
-        controller.localvariablechange("role", idnum ? "p1" : "p1");
+        controller.localvariablechange("role", idnum ? "p2" : "p1");
         });
 
         socket.on('supdate_var', (varname, value) => {
@@ -58,6 +56,38 @@ export function useGameController(storycontent, { setCurrentPage }, serverURL = 
 
         socket.on('player_disconnected', () => {
         console.log('Other player disconnected');
+        });
+
+        socket.on('sgive_permission', (changes) => {
+        console.log('Server gave permission for choice');
+        console.log(changes);
+        for(var c of changes){
+            const log = JSON.parse(c);
+            for(var key in log){
+                controller.localsyncvariablechange(key, log[key]);
+            }
+        }
+        controller.chooseOnPermission();
+        controller.advance();
+        });
+
+        socket.on('sadv_permission', (changes) => {
+        console.log('Server gave permission for advance');
+        console.log(changes);
+        for(var c of changes){
+            const log = JSON.parse(c);
+            for(var key in log){
+                controller.localsyncvariablechange(key, log[key]);
+            }
+        }
+        //controller.chooseOnPermission();
+        controller.advanceApproved();
+        });
+
+        socket.on('timer_up', () => {
+            console.log("server says time is up");
+            //choose timeout.
+            controller.actTimeout();
         });
 
         socket.on('error', ({ message }) => setErrorMessage(message));

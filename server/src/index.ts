@@ -111,12 +111,60 @@ io.on('connection', (socket) => {
     console.log(`Disconnected ${socket.id}`);
   });
 
+  socket.on('cchoicemade', (changesmade: string)=> {
+    console.log(`Choice made for ${playerRooms.get(socket.id)}`);
+    const currentCode = playerRooms.get(socket.id);
+    if(currentCode){
+      if(rooms.get(currentCode)){
+        const result = rooms.get(currentCode)?.gameEngine.ansSubmit(changesmade);
+        if(result){
+          const changes = rooms.get(currentCode)?.gameEngine.getChanges();
+          console.log(`Give permission for ${currentCode}`);
+          io.to(currentCode).emit('sgive_permission', changes);
+          rooms.get(currentCode)?.gameEngine.clearChanges();
+        }
+      }
+    }
+  });
+
   socket.on('cupdate_var', (varname: string, value: string)=>{
     //TODO go to room in game engine, get other players to send out var to.
     console.log(`Received Var ${varname}: ${value} from ${socket.id}`);
     //repeat var
     const currentCode = playerRooms.get(socket.id);
     if(currentCode)io.to(currentCode).emit('supdate_var', varname, value);
+  });
+
+  socket.on('timerstart', async (qindex: number) =>{
+    //if game engine value returns true
+    console.log(`Timer started for ${playerRooms.get(socket.id)}`);
+    const currentCode = playerRooms.get(socket.id);
+    if(currentCode){
+      if(rooms.get(currentCode)){
+        const result = await rooms.get(currentCode)?.gameEngine.timercheck(qindex);
+        if(result){
+          console.log(`Timer reached for ${currentCode}`);
+          //send a timer thing.
+          io.to(currentCode).emit('timer_up');
+        }
+      }
+    }
+  });
+
+  socket.on('cadvancecheck', (changesmade: string) => {
+    console.log(`Advance check for ${playerRooms.get(socket.id)}`);
+    const currentCode = playerRooms.get(socket.id);
+    if(currentCode){
+      if(rooms.get(currentCode)){
+        const result = rooms.get(currentCode)?.gameEngine.advCheckup(changesmade);
+        if(result){
+          const changes = rooms.get(currentCode)?.gameEngine.getChanges();
+          console.log(`Give Advance permission for ${currentCode}`);
+          io.to(currentCode).emit('sadv_permission', changes);
+          rooms.get(currentCode)?.gameEngine.clearChanges();
+        }
+      }
+    }
   });
 });
 
